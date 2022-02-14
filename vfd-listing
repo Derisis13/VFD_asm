@@ -1,5 +1,9 @@
 
 vfd:     file format ihex
+;RSB PC2 
+;CLKB PB6
+;DIN PB7
+;CSB PB0
 
 
 Disassembly of section .sec1:
@@ -1545,8 +1549,8 @@ STC:
      c98:	08 95       	ret
      c9a:	60 97       	sbiw	r28, 0x10	; 16
      c9c:	1a 93       	st	-Y, r17
-     c9e:	28 9a       	sbi	0x05, 0	; 5
-     ca0:	20 9a       	sbi	0x04, 0	; 4
+     c9e:	28 9a       	sbi	0x05, 0	; CSB high
+     ca0:	20 9a       	sbi	0x04, 0	; 
      ca2:	2e 9a       	sbi	0x05, 6	; 5
      ca4:	26 9a       	sbi	0x04, 6	; 4
      ca6:	2f 98       	cbi	0x05, 7	; 5
