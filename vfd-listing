@@ -47,15 +47,15 @@ Disassembly of section .sec1:
 RESET:
       46:	f8 94       	cli
       48:	ee 27       	eor	r30, r30
-      4a:	ef bb       	out	0x1f, r30	; 31
+      4a:	ef bb       	out	EECR, r30	; 31
       4c:	f1 e0       	ldi	r31, 0x01	; 1
-      4e:	f5 bf       	out	0x35, r31	; 53
-      50:	e5 bf       	out	0x35, r30	; 53
+      4e:	f5 bf       	out	MCUCR, r31	; 53
+      50:	e5 bf       	out	MCUCR, r30	; 53
       52:	f8 e1       	ldi	r31, 0x18	; 24
       54:	a8 95       	wdr
-      56:	a4 b7       	in	r26, 0x34	; 52
+      56:	a4 b7       	in	r26, MCUSR	; 52
       58:	a7 7f       	andi	r26, 0xF7	; 247
-      5a:	a4 bf       	out	0x34, r26	; 52
+      5a:	a4 bf       	out	MCUSR, r26	; 52
       5c:	f0 93 60 00 	sts	0x0060, r31	;  0x800060
       60:	e0 93 60 00 	sts	0x0060, r30	;  0x800060
       64:	8d e0       	ldi	r24, 0x0D	; 13
@@ -90,35 +90,41 @@ RESET:
       9e:	fb 01       	movw	r30, r22
       a0:	f0 cf       	rjmp	.-32     	;  0x82
       a2:	e0 e0       	ldi	r30, 0x00	; 0
-      a4:	ee bb       	out	0x1e, r30	; 30
+      a4:	ee bb       	out	GPIOR0, r30	; 30
       a6:	e0 e0       	ldi	r30, 0x00	; 0
-      a8:	ea bd       	out	0x2a, r30	; 42
+      a8:	ea bd       	out	GPIOR1, r30	; 42
       aa:	e0 e0       	ldi	r30, 0x00	; 0
-      ac:	eb bd       	out	0x2b, r30	; 43
+      ac:	eb bd       	out	GPIOR2, r30	; 43
       ae:	ef ef       	ldi	r30, 0xFF	; 255
-      b0:	ed bf       	out	0x3d, r30	; 61
+      b0:	ed bf       	out	SPL, r30	; 61
       b2:	e4 e0       	ldi	r30, 0x04	; 4
-      b4:	ee bf       	out	0x3e, r30	; 62
+      b4:	ee bf       	out	SPH, r30	; 62
       b6:	c0 e0       	ldi	r28, 0x00	; 0
       b8:	d2 e0       	ldi	r29, 0x02	; 2
       ba:	29 c0       	rjmp	.+82     	;  0x10e
       bc:	59 db       	rcall	.-2382   	;  0xfffff770
       be:	08 95       	ret
-      c0:	5c 98       	cbi	0x0b, 4	; 11
+
+
+
+      c0:	5c 98       	cbi	PORTD, PORTD4	; 11
       c2:	ee ef       	ldi	r30, 0xFE	; 254
       c4:	3e 22       	and	r3, r30
       c6:	29 d6       	rcall	.+3154   	;  0xd1a
       c8:	00 d5       	rcall	.+2560   	;  0xaca
       ca:	08 95       	ret
+
+
+
       cc:	1a 93       	st	-Y, r17
-      ce:	5c 9a       	sbi	0x0b, 4	; 11
-      d0:	54 9a       	sbi	0x0a, 4	; 10
-      d2:	44 98       	cbi	0x08, 4	; 8
-      d4:	45 9a       	sbi	0x08, 5	; 8
-      d6:	5b 98       	cbi	0x0b, 3	; 11
-      d8:	3c 9a       	sbi	0x07, 4	; 7
-      da:	3d 9a       	sbi	0x07, 5	; 7
-      dc:	53 9a       	sbi	0x0a, 3	; 10
+      ce:	5c 9a       	sbi	PORTD, PORTD4	; 11
+      d0:	54 9a       	sbi	DDRD, DDD4	; 10
+      d2:	44 98       	cbi	PORTC, PORTC4	; 8
+      d4:	45 9a       	sbi	PORTC, PORTC5	; 8
+      d6:	5b 98       	cbi	PORTD, PORTD3	; 11
+      d8:	3c 9a       	sbi	DDRC, DDC4	; 7
+      da:	3d 9a       	sbi	DDRC, DDC5	; 7
+      dc:	53 9a       	sbi	DDRD, DDD3	; 10
       de:	ab e1       	ldi	r26, 0x1B	; 27
       e0:	b0 e0       	ldi	r27, 0x00	; 0
       e2:	cf de       	rcall	.-610    	;  0xfffffe82
@@ -143,8 +149,11 @@ RESET:
      108:	d9 df       	rcall	.-78     	;  0xbc
      10a:	19 91       	ld	r17, Y+
      10c:	08 95       	ret
+
+
+
      10e:	78 94       	sei
-     110:	c3 d4       	rcall	.+2438   	;  0xa98
+     110:	c3 d4       	rcall	SPI_SEND   	;  0xa98
      112:	81 d1       	rcall	.+770    	;  0x416
      114:	c2 d5       	rcall	.+2948   	;  0xc9a
      116:	ae d0       	rcall	.+348    	;  0x274
@@ -158,7 +167,7 @@ RESET:
      126:	fb cf       	rjmp	.-10     	;  0x11e
      128:	ff cf       	rjmp	.-2      	;  0x128
      12a:	e0 e0       	ldi	r30, 0x00	; 0
-     12c:	e4 bd       	out	0x24, r30	; 36
+     12c:	e4 bd       	out	TCCR0A, r30	; 36
      12e:	e5 e0       	ldi	r30, 0x05	; 5
      130:	e0 93 b1 00 	sts	0x00B1, r30	;  0x8000b1
      134:	e0 93 b2 00 	sts	0x00B2, r30	;  0x8000b2
@@ -171,6 +180,8 @@ RESET:
      14c:	e0 93 02 02 	sts	0x0202, r30	;  0x800202
      150:	e0 93 03 02 	sts	0x0203, r30	;  0x800203
      154:	08 95       	ret
+
+
 TIM2_OVF:
      156:	0a 92       	st	-Y, r0
      158:	1a 92       	st	-Y, r1
@@ -183,13 +194,13 @@ TIM2_OVF:
      166:	ba 93       	st	-Y, r27
      168:	ea 93       	st	-Y, r30
      16a:	fa 93       	st	-Y, r31
-     16c:	ef b7       	in	r30, 0x3f	; 63
+     16c:	ef b7       	in	r30, SREG	; 63
      16e:	ea 93       	st	-Y, r30
      170:	e5 e0       	ldi	r30, 0x05	; 5
      172:	e0 93 b2 00 	sts	0x00B2, r30	;  0x8000b2
      176:	f6 01       	movw	r30, r12
      178:	31 96       	adiw	r30, 0x01	; 1
-     17a:	6f 01       	movw	r12, r30
+     17a:	6f 01       	movw	r12, r30	;incrementing r12:r13 by one
      17c:	e9 e1       	ldi	r30, 0x19	; 25
      17e:	f0 e0       	ldi	r31, 0x00	; 0
      180:	ce 16       	cp	r12, r30
@@ -199,7 +210,7 @@ TIM2_OVF:
      188:	df 0a       	sbc	r13, r31
      18a:	0e d0       	rcall	.+28     	;  0x1a8
      18c:	e9 91       	ld	r30, Y+
-     18e:	ef bf       	out	0x3f, r30	; 63
+     18e:	ef bf       	out	SREG, r30	; 63
      190:	f9 91       	ld	r31, Y+
      192:	e9 91       	ld	r30, Y+
      194:	b9 91       	ld	r27, Y+
@@ -212,6 +223,8 @@ TIM2_OVF:
      1a2:	19 90       	ld	r1, Y+
      1a4:	09 90       	ld	r0, Y+
      1a6:	18 95       	reti
+
+
      1a8:	e0 91 04 02 	lds	r30, 0x0204	;  0x800204
      1ac:	f0 91 05 02 	lds	r31, 0x0205	;  0x800205
      1b0:	31 96       	adiw	r30, 0x01	; 1
@@ -298,35 +311,37 @@ TIM2_OVF:
      26e:	58 80       	ld	r5, Y
      270:	23 96       	adiw	r28, 0x03	; 3
      272:	08 95       	ret
+     
+;gpio input here
      274:	e8 e0       	ldi	r30, 0x08	; 8
      276:	8e 2e       	mov	r8, r30
      278:	83 da       	rcall	.-2810   	;  0xfffff780
-     27a:	55 98       	cbi	0x0a, 5	; 10
-     27c:	56 98       	cbi	0x0a, 6	; 10
-     27e:	57 98       	cbi	0x0a, 7	; 10
-     280:	38 98       	cbi	0x07, 0	; 7
-     282:	39 98       	cbi	0x07, 1	; 7
-     284:	21 98       	cbi	0x04, 1	; 4
-     286:	5d 98       	cbi	0x0b, 5	; 11
-     288:	55 9a       	sbi	0x0a, 5	; 10
-     28a:	4d 99       	sbic	0x09, 5	; 9
+     27a:	55 98       	cbi	DDRD, DDD5	; 10
+     27c:	56 98       	cbi	DDRD, DDD6	; 10
+     27e:	57 98       	cbi	DDRD, DDD7	; 10
+     280:	38 98       	cbi	DDRC, DDC0	; 7
+     282:	39 98       	cbi	DDRC, DDC1	; 7
+     284:	21 98       	cbi	DDRB, DDB1	; 4
+     286:	5d 98       	cbi	PORTD, PORTD5	; 11
+     288:	55 9a       	sbi	DDRD, DDD5	; 10
+     28a:	4d 99       	sbic	PIND, PIND5	; 9
      28c:	fe cf       	rjmp	.-4      	;  0x28a
-     28e:	30 99       	sbic	0x06, 0	; 6
+     28e:	30 99       	sbic	PINC, PINC0	; 6
      290:	03 c0       	rjmp	.+6      	;  0x298
      292:	7c da       	rcall	.-2824   	;  0xfffff78c
      294:	e1 60       	ori	r30, 0x01	; 1
      296:	7d da       	rcall	.-2822   	;  0xfffff792
-     298:	31 99       	sbic	0x06, 1	; 6
+     298:	31 99       	sbic	PINC, PINC1	; 6
      29a:	03 c0       	rjmp	.+6      	;  0x2a2
      29c:	77 da       	rcall	.-2834   	;  0xfffff78c
      29e:	e8 60       	ori	r30, 0x08	; 8
      2a0:	78 da       	rcall	.-2832   	;  0xfffff792
-     2a2:	19 99       	sbic	0x03, 1	; 3
+     2a2:	19 99       	sbic	PINB, PINB1	; 3
      2a4:	03 c0       	rjmp	.+6      	;  0x2ac
      2a6:	72 da       	rcall	.-2844   	;  0xfffff78c
      2a8:	e0 64       	ori	r30, 0x40	; 64
      2aa:	73 da       	rcall	.-2842   	;  0xfffff792
-     2ac:	55 98       	cbi	0x0a, 5	; 10
+     2ac:	55 98       	cbi	DDRD, DDD5	; 10
      2ae:	74 da       	rcall	.-2840   	;  0xfffff798
      2b0:	30 97       	sbiw	r30, 0x00	; 0
      2b2:	11 f0       	breq	.+4      	;  0x2b8
@@ -337,84 +352,85 @@ TIM2_OVF:
      2bc:	e8 e0       	ldi	r30, 0x08	; 8
      2be:	e8 15       	cp	r30, r8
      2c0:	f1 f5       	brne	.+124    	;  0x33e
-     2c2:	5d 98       	cbi	0x0b, 5	; 11
-     2c4:	55 9a       	sbi	0x0a, 5	; 10
-     2c6:	4d 99       	sbic	0x09, 5	; 9
+     2c2:	5d 98       	cbi	PORTB, PORTB5	; 11
+     2c4:	55 9a       	sbi	DDRB, DDB5	; 10
+     2c6:	4d 99       	sbic	PIND, PIND5	; 9
      2c8:	fe cf       	rjmp	.-4      	;  0x2c6
-     2ca:	30 99       	sbic	0x06, 0	; 6
+     2ca:	30 99       	sbic	PINC, PINC0	; 6
      2cc:	03 c0       	rjmp	.+6      	;  0x2d4
      2ce:	5e da       	rcall	.-2884   	;  0xfffff78c
      2d0:	e1 60       	ori	r30, 0x01	; 1
      2d2:	5f da       	rcall	.-2882   	;  0xfffff792
-     2d4:	31 99       	sbic	0x06, 1	; 6
+     2d4:	31 99       	sbic	PINC, PINC1	; 6
      2d6:	03 c0       	rjmp	.+6      	;  0x2de
      2d8:	59 da       	rcall	.-2894   	;  0xfffff78c
      2da:	e8 60       	ori	r30, 0x08	; 8
      2dc:	5a da       	rcall	.-2892   	;  0xfffff792
-     2de:	19 99       	sbic	0x03, 1	; 3
+     2de:	19 99       	sbic	PINB, PINB1	; 3
      2e0:	03 c0       	rjmp	.+6      	;  0x2e8
      2e2:	54 da       	rcall	.-2904   	;  0xfffff78c
      2e4:	e0 64       	ori	r30, 0x40	; 64
      2e6:	55 da       	rcall	.-2902   	;  0xfffff792
-     2e8:	55 98       	cbi	0x0a, 5	; 10
-     2ea:	5e 98       	cbi	0x0b, 6	; 11
-     2ec:	56 9a       	sbi	0x0a, 6	; 10
-     2ee:	4e 99       	sbic	0x09, 6	; 9
+     2e8:	55 98       	cbi	DDRD, DDD5	; 10
+     2ea:	5e 98       	cbi	PORTD, PORTD6	; 11
+     2ec:	56 9a       	sbi	DDRD, DDD6	; 10
+     2ee:	4e 99       	sbic	PIND, PIND6	; 9
      2f0:	fe cf       	rjmp	.-4      	;  0x2ee
-     2f2:	30 99       	sbic	0x06, 0	; 6
+     2f2:	30 99       	sbic	PINC, PINC0	; 6
      2f4:	03 c0       	rjmp	.+6      	;  0x2fc
      2f6:	4a da       	rcall	.-2924   	;  0xfffff78c
      2f8:	e2 60       	ori	r30, 0x02	; 2
      2fa:	4b da       	rcall	.-2922   	;  0xfffff792
-     2fc:	31 99       	sbic	0x06, 1	; 6
+     2fc:	31 99       	sbic	PINC, PINC1	; 6
      2fe:	03 c0       	rjmp	.+6      	;  0x306
      300:	45 da       	rcall	.-2934   	;  0xfffff78c
      302:	e0 61       	ori	r30, 0x10	; 16
      304:	46 da       	rcall	.-2932   	;  0xfffff792
-     306:	19 99       	sbic	0x03, 1	; 3
+     306:	19 99       	sbic	PINB, PINB1	; 3
      308:	03 c0       	rjmp	.+6      	;  0x310
      30a:	40 da       	rcall	.-2944   	;  0xfffff78c
      30c:	e0 68       	ori	r30, 0x80	; 128
      30e:	41 da       	rcall	.-2942   	;  0xfffff792
-     310:	56 98       	cbi	0x0a, 6	; 10
-     312:	5f 98       	cbi	0x0b, 7	; 11
-     314:	57 9a       	sbi	0x0a, 7	; 10
-     316:	4f 99       	sbic	0x09, 7	; 9
+     310:	56 98       	cbi	DDRD, DDD6	; 10
+     312:	5f 98       	cbi	PORTB, PORTB7	; 11
+     314:	57 9a       	sbi	DDRD, DDD7	; 10
+     316:	4f 99       	sbic	PIND, PIND7	; 9
      318:	fe cf       	rjmp	.-4      	;  0x316
-     31a:	30 99       	sbic	0x06, 0	; 6
+     31a:	30 99       	sbic	PINC, PINC0	; 6
      31c:	03 c0       	rjmp	.+6      	;  0x324
      31e:	36 da       	rcall	.-2964   	;  0xfffff78c
      320:	e4 60       	ori	r30, 0x04	; 4
-     322:	37 da       	rcall	.-2962   	;  0xfffff792
-     324:	31 99       	sbic	0x06, 1	; 6
+     322:	37 da       	rcall	.-2962   	;  0xfffff792 (3792?)
+     324:	31 99       	sbic	PINC, PINC1	; 6
      326:	03 c0       	rjmp	.+6      	;  0x32e
      328:	31 da       	rcall	.-2974   	;  0xfffff78c
      32a:	e0 62       	ori	r30, 0x20	; 32
      32c:	32 da       	rcall	.-2972   	;  0xfffff792
-     32e:	19 99       	sbic	0x03, 1	; 3
+     32e:	19 99       	sbic	PINB, PINB1	; 3
      330:	05 c0       	rjmp	.+10     	;  0x33c
      332:	e0 91 09 02 	lds	r30, 0x0209	;  0x800209
      336:	e1 60       	ori	r30, 0x01	; 1
      338:	e0 93 09 02 	sts	0x0209, r30	;  0x800209
      33c:	0b c0       	rjmp	.+22     	;  0x354
-     33e:	5f 98       	cbi	0x0b, 7	; 11
-     340:	57 9a       	sbi	0x0a, 7	; 10
-     342:	4f 9b       	sbis	0x09, 7	; 9
+     33e:	5f 98       	cbi	PORTD, PORTD7	; 11
+     340:	57 9a       	sbi	DDRD, DDD7	; 10
+     342:	4f 9b       	sbis	PIND, PIND7	; 9
      344:	02 c0       	rjmp	.+4      	;  0x34a
-     346:	56 98       	cbi	0x0a, 6	; 10
+     346:	56 98       	cbi	DDRD, DDD6	; 10
      348:	fc cf       	rjmp	.-8      	;  0x342
-     34a:	4e 99       	sbic	0x09, 6	; 9
+     34a:	4e 99       	sbic	PIND, PIND6	; 9
      34c:	03 c0       	rjmp	.+6      	;  0x354
      34e:	1e da       	rcall	.-3012   	;  0xfffff78c
      350:	e0 68       	ori	r30, 0x80	; 128
      352:	1f da       	rcall	.-3010   	;  0xfffff792
-     354:	57 98       	cbi	0x0a, 7	; 10
+     354:	57 98       	cbi	DDRD, DDD7	; 10
      356:	25 da       	rcall	.-2998   	;  0xfffff7a2
      358:	ea 17       	cp	r30, r26
      35a:	fb 07       	cpc	r31, r27
      35c:	09 f0       	breq	.+2      	;  0x360
      35e:	01 d0       	rcall	.+2      	;  0x362
      360:	08 95       	ret
+
      362:	b1 dd       	rcall	.-1182   	;  0xfffffec6
      364:	1e da       	rcall	.-3012   	;  0xfffff7a2
      366:	ea 27       	eor	r30, r26
@@ -1064,7 +1080,7 @@ TIM2_OVF:
      874:	24 96       	adiw	r28, 0x04	; 4
      876:	08 95       	ret
      878:	02 d0       	rcall	.+4      	;  0x87e
-     87a:	52 98       	cbi	0x0a, 2	; 10
+     87a:	52 98       	cbi	DDRD, DDD2	; 10
      87c:	08 95       	ret
      87e:	e0 e0       	ldi	r30, 0x00	; 0
      880:	e0 93 70 02 	sts	0x0270, r30	;  0x800270
@@ -1313,38 +1329,46 @@ TIM0_OVF:
      a92:	e5 bd       	out	0x25, r30	; 37
      a94:	e9 91       	ld	r30, Y+
      a96:	18 95       	reti
-     a98:	3e 98       	cbi	0x07, 6	; 7
-     a9a:	43 9a       	sbi	0x08, 3	; 8
-     a9c:	3b 98       	cbi	0x07, 3	; 7
-     a9e:	22 98       	cbi	0x04, 2	; 4
-     aa0:	23 98       	cbi	0x04, 3	; 4
-     aa2:	24 98       	cbi	0x04, 4	; 4
-     aa4:	25 98       	cbi	0x04, 5	; 4
+
+SPI_SEND:
+;sends AA trough SPI, sets gpio as input, puts a 0 int into ram
+     a98:	3e 98       	cbi	DDRC, DDD6	; 7
+     a9a:	43 9a       	sbi	PORTC, PORTC3	; 8
+     a9c:	3b 98       	cbi	DDRC, DDD3	; 7
+     a9e:	22 98       	cbi	DDRB, DDB2	; 4
+     aa0:	23 98       	cbi	DDRB, DDB3	; 4
+     aa2:	24 98       	cbi	DDRB, DDB4	; 4
+     aa4:	25 98       	cbi	DDRB, DDB5	; 4
      aa6:	ea ea       	ldi	r30, 0xAA	; 170
-     aa8:	ee bd       	out	0x2e, r30	; 46
+     aa8:	ee bd       	out	SPRD, r30	; 46 SPI payload 0xAA
      aaa:	e0 ec       	ldi	r30, 0xC0	; 192
-     aac:	ec bd       	out	0x2c, r30	; 44
+     aac:	ec bd       	out	SPCR, r30	; 44 send SPI
      aae:	e0 e0       	ldi	r30, 0x00	; 0
      ab0:	e0 93 40 03 	sts	0x0340, r30	;  0x800340
      ab4:	e0 93 41 03 	sts	0x0341, r30	;  0x800341
      ab8:	e0 93 c2 03 	sts	0x03C2, r30	;  0x8003c2
      abc:	e0 93 c3 03 	sts	0x03C3, r30	;  0x8003c3
      ac0:	08 95       	ret
-     ac2:	43 9a       	sbi	0x08, 3	; 8
-     ac4:	3b 9a       	sbi	0x07, 3	; 7
-     ac6:	24 9a       	sbi	0x04, 4	; 4
+     
+
+     ac2:	43 9a       	sbi	PORTC, PORTC3	; 8
+     ac4:	3b 9a       	sbi	DDRC, DDC3	; 7
+     ac6:	24 9a       	sbi	DDRB, DDD4	; 4
      ac8:	08 95       	ret
-     aca:	3b 98       	cbi	0x07, 3	; 7
-     acc:	24 98       	cbi	0x04, 4	; 4
+
+     aca:	3b 98       	cbi	DDRC, DDC3	; 7
+     acc:	24 98       	cbi	DDRB, DDB4	; 4
      ace:	08 95       	ret
+
 STC:
+;recieving and sending SPI data
      ad0:	aa 93       	st	-Y, r26
      ad2:	ea 93       	st	-Y, r30
      ad4:	fa 93       	st	-Y, r31
-     ad6:	ef b7       	in	r30, 0x3f	; 63
+     ad6:	ef b7       	in	r30, SREG	; 63
      ad8:	ea 93       	st	-Y, r30
      ada:	f7 d9       	rcall	.-3090   	;  0xfffffeca
-     adc:	1e b5       	in	r17, 0x2e	; 46
+     adc:	1e b5       	in	r17, SPDR	; 46 Read in the SPI data reg
      ade:	e0 91 c2 03 	lds	r30, 0x03C2	;  0x8003c2
      ae2:	40 d7       	rcall	.+3712   	;  0x1964
      ae4:	ea 17       	cp	r30, r26
@@ -1354,7 +1378,7 @@ STC:
      aee:	ee 5b       	subi	r30, 0xBE	; 190
      af0:	fc 4f       	sbci	r31, 0xFC	; 252
      af2:	e0 81       	ld	r30, Z
-     af4:	ee bd       	out	0x2e, r30	; 46
+     af4:	ee bd       	out	0x2e, r30	; 46 Set SPI payload to *(Z)
      af6:	36 d7       	rcall	.+3692   	;  0x1964
      af8:	af 5f       	subi	r26, 0xFF	; 255
      afa:	a0 93 c3 03 	sts	0x03C3, r26	;  0x8003c3
@@ -1366,7 +1390,7 @@ STC:
      b0a:	03 c0       	rjmp	.+6      	;  0xb12
      b0c:	01 e0       	ldi	r16, 0x01	; 1
      b0e:	ea ea       	ldi	r30, 0xAA	; 170
-     b10:	ee bd       	out	0x2e, r30	; 46
+     b10:	ee bd       	out	0x2e, r30	; 46 Set SPI payload to AA
      b12:	1a 3a       	cpi	r17, 0xAA	; 170
      b14:	89 f0       	breq	.+34     	;  0xb38
      b16:	29 d7       	rcall	.+3666   	;  0x196a
@@ -1386,18 +1410,21 @@ STC:
      b38:	18 d7       	rcall	.+3632   	;  0x196a
      b3a:	1b d7       	rcall	.+3638   	;  0x1972
      b3c:	11 f4       	brne	.+4      	;  0xb42
-     b3e:	43 98       	cbi	0x08, 3	; 8
+     b3e:	43 98       	cbi	PORTC, PORTC3	; 8
      b40:	03 c0       	rjmp	.+6      	;  0xb48
      b42:	00 30       	cpi	r16, 0x00	; 0
      b44:	09 f0       	breq	.+2      	;  0xb48
-     b46:	43 9a       	sbi	0x08, 3	; 8
+     b46:	43 9a       	sbi	PORTC, PORTC3	; 8
      b48:	ca d9       	rcall	.-3180   	;  0xfffffede
      b4a:	e9 91       	ld	r30, Y+
-     b4c:	ef bf       	out	0x3f, r30	; 63
+     b4c:	ef bf       	out	SREG, r30	; 63
      b4e:	f9 91       	ld	r31, Y+
      b50:	e9 91       	ld	r30, Y+
      b52:	a9 91       	ld	r26, Y+
      b54:	18 95       	reti
+
+
+
      b56:	e0 91 40 03 	lds	r30, 0x0340	;  0x800340
      b5a:	a0 91 41 03 	lds	r26, 0x0341	;  0x800341
      b5e:	ea 17       	cp	r30, r26
@@ -1505,6 +1532,9 @@ STC:
      c40:	47 d9       	rcall	.-3442   	;  0xfffffed0
      c42:	29 96       	adiw	r28, 0x09	; 9
      c44:	08 95       	ret
+     
+     
+;
      c46:	1a 93       	st	-Y, r17
      c48:	10 e0       	ldi	r17, 0x00	; 0
      c4a:	e9 81       	ldd	r30, Y+1	; 0x01
@@ -1530,6 +1560,8 @@ STC:
      c72:	18 81       	ld	r17, Y
      c74:	26 96       	adiw	r28, 0x06	; 6
      c76:	08 95       	ret
+
+;
      c78:	1a 93       	st	-Y, r17
      c7a:	10 e0       	ldi	r17, 0x00	; 0
      c7c:	e9 81       	ldd	r30, Y+1	; 0x01
@@ -1549,15 +1581,15 @@ STC:
      c98:	08 95       	ret
      c9a:	60 97       	sbiw	r28, 0x10	; 16
      c9c:	1a 93       	st	-Y, r17
-     c9e:	28 9a       	sbi	0x05, 0	; CSB high
-     ca0:	20 9a       	sbi	0x04, 0	; 
-     ca2:	2e 9a       	sbi	0x05, 6	; 5
-     ca4:	26 9a       	sbi	0x04, 6	; 4
-     ca6:	2f 98       	cbi	0x05, 7	; 5
-     ca8:	27 9a       	sbi	0x04, 7	; 4
+     c9e:	28 9a       	sbi	PORTB, PORTB0	; CSB high
+     ca0:	20 9a       	sbi	DDRB, DDB0	; 
+     ca2:	2e 9a       	sbi	PORTB, PORTB6	; 5
+     ca4:	26 9a       	sbi	DDRB, DDB6	; 4
+     ca6:	2f 98       	cbi	PORTB, PORTB7	; 5
+     ca8:	27 9a       	sbi	DDRB, DDB7	; 4
      caa:	fc d4       	rcall	.+2552   	;  0x16a4
-     cac:	42 98       	cbi	0x08, 2	; 8
-     cae:	3a 9a       	sbi	0x07, 2	; 7
+     cac:	42 98       	cbi	PORTC, PORTC2	; 8
+     cae:	3a 9a       	sbi	DDRC, DDC2	; 7
      cb0:	10 e0       	ldi	r17, 0x00	; 0
      cb2:	1a 30       	cpi	r17, 0x0A	; 10
      cb4:	18 f4       	brcc	.+6      	;  0xcbc
@@ -1985,7 +2017,7 @@ STC:
     109c:	df 01       	movw	r26, r30
     109e:	ee 0f       	add	r30, r30
     10a0:	ff 1f       	adc	r31, r31
-    10a2:	86 d6       	rcall	.+3340   	;  0x1db0
+    10a2:	86 d6       	rcall	SHIFT_BY_4   	;  0x1db0
     10a4:	bf 01       	movw	r22, r30
     10a6:	fd 01       	movw	r30, r26
     10a8:	e6 0f       	add	r30, r22
@@ -2059,6 +2091,8 @@ STC:
     1158:	08 95       	ret
     115a:	42 98       	cbi	0x08, 2	; 8
     115c:	08 95       	ret
+    
+
     115e:	e1 e0       	ldi	r30, 0x01	; 1
     1160:	e0 93 5e 04 	sts	0x045E, r30	;  0x80045e
     1164:	e0 91 ef 03 	lds	r30, 0x03EF	;  0x8003ef
@@ -2217,7 +2251,7 @@ STC:
     12bc:	a0 d4       	rcall	.+2368   	;  0x1bfe
     12be:	a4 d4       	rcall	.+2376   	;  0x1c08
     12c0:	9e d4       	rcall	.+2364   	;  0x1bfe
-    12c2:	7f d5       	rcall	.+2814   	;  0x1dc2
+    12c2:	7f d5       	rcall	SHIFT_ROT   	;  0x1dc2
     12c4:	c7 d4       	rcall	.+2446   	;  0x1c54
     12c6:	c9 d4       	rcall	.+2450   	;  0x1c5a
     12c8:	d0 d4       	rcall	.+2464   	;  0x1c6a
@@ -2472,7 +2506,7 @@ STC:
     14ec:	15 d4       	rcall	.+2090   	;  0x1d18
     14ee:	0f d3       	rcall	.+1566   	;  0x1b0e
     14f0:	16 96       	adiw	r26, 0x06	; 6
-    14f2:	b4 d4       	rcall	.+2408   	;  0x1e5c
+    14f2:	b4 d4       	rcall	LD_WORD   	;  0x1e5c
     14f4:	e0 93 ca 03 	sts	0x03CA, r30	;  0x8003ca
     14f8:	f0 93 cb 03 	sts	0x03CB, r31	;  0x8003cb
     14fc:	e2 e2       	ldi	r30, 0x22	; 34
@@ -2497,7 +2531,7 @@ STC:
     1524:	e0 91 cb 03 	lds	r30, 0x03CB	;  0x8003cb
     1528:	e6 95       	lsr	r30
     152a:	08 d4       	rcall	.+2064   	;  0x1d3c
-    152c:	4a d4       	rcall	.+2196   	;  0x1dc2
+    152c:	4a d4       	rcall	SHIFT_ROT   	;  0x1dc2
     152e:	e1 d3       	rcall	.+1986   	;  0x1cf2
     1530:	0d d4       	rcall	.+2074   	;  0x1d4c
     1532:	65 d3       	rcall	.+1738   	;  0x1bfe
@@ -2631,7 +2665,7 @@ STC:
     1638:	61 96       	adiw	r28, 0x11	; 17
     163a:	08 95       	ret
     163c:	42 d4       	rcall	ST_SIX   	;  0x1ec2
-    163e:	28 98       	cbi	0x05, 0	; 5
+    163e:	28 98       	cbi	PORTB, PORTB0	; 5
     1640:	00 e0       	ldi	r16, 0x00	; 0
     1642:	10 e0       	ldi	r17, 0x00	; 0
     1644:	e8 85       	ldd	r30, Y+8	; 0x08
@@ -2657,12 +2691,12 @@ STC:
     166c:	fb 23       	and	r31, r27
     166e:	30 97       	sbiw	r30, 0x00	; 0
     1670:	11 f0       	breq	.+4      	;  0x1676
-    1672:	2f 9a       	sbi	0x05, 7	; 5
+    1672:	2f 9a       	sbi	PORTB, PORTB7	; 5
     1674:	01 c0       	rjmp	.+2      	;  0x1678
-    1676:	2f 98       	cbi	0x05, 7	; 5
-    1678:	2e 98       	cbi	0x05, 6	; 5
+    1676:	2f 98       	cbi	PORTB, PORTB7	; 5
+    1678:	2e 98       	cbi	PORTB, PORTB6	; 5
     167a:	14 d0       	rcall	.+40     	;  0x16a4
-    167c:	2e 9a       	sbi	0x05, 6	; 5
+    167c:	2e 9a       	sbi	PORTB, PORTB6	; 5
     167e:	12 d0       	rcall	.+36     	;  0x16a4
     1680:	2f 5f       	subi	r18, 0xFF	; 255
     1682:	3f 4f       	sbci	r19, 0xFF	; 255
@@ -2678,7 +2712,7 @@ STC:
     1696:	79 d3       	rcall	.+1778   	;  0x1d8a
     1698:	05 d0       	rcall	.+10     	;  0x16a4
     169a:	04 d0       	rcall	.+8      	;  0x16a4
-    169c:	28 9a       	sbi	0x05, 0	; 5
+    169c:	28 9a       	sbi	PORTB, PORTB0	; 5
     169e:	18 d4       	rcall	LD_SIX   	;  0x1ed0
     16a0:	29 96       	adiw	r28, 0x09	; 9
     16a2:	08 95       	ret
@@ -2809,7 +2843,7 @@ STC:
     17be:	f9 01       	movw	r30, r18
     17c0:	a1 e0       	ldi	r26, 0x01	; 1
     17c2:	b0 e0       	ldi	r27, 0x00	; 0
-    17c4:	ec d2       	rcall	.+1496   	;  0x1d9e
+    17c4:	ec d2       	rcall	LSHIFT_BY_N:   	;  0x1d9e
     17c6:	08 95       	ret
     17c8:	ea e0       	ldi	r30, 0x0A	; 10
     17ca:	0e d3       	rcall	.+1564   	;  0x1de8
@@ -3109,7 +3143,7 @@ STC:
     1a5c:	eb c9       	rjmp	.-3114   	;  0xe34
     1a5e:	a1 e0       	ldi	r26, 0x01	; 1
     1a60:	b0 e0       	ldi	r27, 0x00	; 0
-    1a62:	9d d1       	rcall	.+826    	;  0x1d9e
+    1a62:	9d d1       	rcall	LSHIFT_BY_N   	;  0x1d9e
     1a64:	08 95       	ret
     1a66:	a0 91 67 04 	lds	r26, 0x0467	;  0x800467
     1a6a:	b0 91 68 04 	lds	r27, 0x0468	;  0x800468
@@ -3482,15 +3516,22 @@ STC:
     1d98:	68 1f       	adc	r22, r24
     1d9a:	79 1f       	adc	r23, r25
     1d9c:	08 95       	ret
+
+LSHIFT_BY_N:
+; r26:r27 << r30
     1d9e:	ee 23       	and	r30, r30
     1da0:	0e 2e       	mov	r0, r30
     1da2:	fd 01       	movw	r30, r26
     1da4:	21 f0       	breq	.+8      	;  0x1dae
+SHIFT_LOOP:
     1da6:	ee 0f       	add	r30, r30
     1da8:	ff 1f       	adc	r31, r31
     1daa:	0a 94       	dec	r0
-    1dac:	e1 f7       	brne	.-8      	;  0x1da6
+    1dac:	e1 f7       	brne	SHIFT_LOOP     	;  0x1da6
     1dae:	08 95       	ret
+
+SHIFT_BY_4:
+;shift word (r30, r31) by 4.
     1db0:	ee 0f       	add	r30, r30
     1db2:	ff 1f       	adc	r31, r31
     1db4:	ee 0f       	add	r30, r30
@@ -3500,6 +3541,9 @@ STC:
     1dbc:	ee 0f       	add	r30, r30
     1dbe:	ff 1f       	adc	r31, r31
     1dc0:	08 95       	ret
+    
+SHIFT_ROT:
+;r31 >> 4 és r30 négyszeres carry-n keresztüli jobbra rotálása.
     1dc2:	f6 95       	lsr	r31
     1dc4:	e7 95       	ror	r30
     1dc6:	f6 95       	lsr	r31
@@ -3509,25 +3553,34 @@ STC:
     1dce:	f6 95       	lsr	r31
     1dd0:	e7 95       	ror	r30
     1dd2:	08 95       	ret
+
+
+; Can't find where it's called
     1dd4:	ee 0f       	add	r30, r30
     1dd6:	ff 1f       	adc	r31, r31
     1dd8:	66 1f       	adc	r22, r22
     1dda:	77 1f       	adc	r23, r23
     1ddc:	08 95       	ret
+
+
+; Can't find where it's called
     1dde:	e0 95       	com	r30
     1de0:	f0 95       	com	r31
     1de2:	60 95       	com	r22
     1de4:	70 95       	com	r23
     1de6:	08 95       	ret
+
+
+;Arithmetic/logical/delaying function. Lasts until LD_WORD
     1de8:	00 24       	eor	r0, r0
-    1dea:	98 e0       	ldi	r25, 0x08	; 8
+    1dea:	98 e0       	ldi	r25, 0x08	; 8 hex literal
     1dec:	aa 0f       	add	r26, r26
     1dee:	00 1c       	adc	r0, r0
     1df0:	0e 1a       	sub	r0, r30
     1df2:	10 f4       	brcc	.+4      	;  0x1df8
     1df4:	0e 0e       	add	r0, r30
     1df6:	01 c0       	rjmp	.+2      	;  0x1dfa
-    1df8:	a1 60       	ori	r26, 0x01	; 1
+    1df8:	a1 60       	ori	r26, 0x01	; 1 hex literal
     1dfa:	9a 95       	dec	r25
     1dfc:	b9 f7       	brne	.-18     	;  0x1dec
     1dfe:	ea 2f       	mov	r30, r26
@@ -3540,7 +3593,7 @@ STC:
     1e0c:	11 24       	eor	r1, r1
     1e0e:	44 27       	eor	r20, r20
     1e10:	55 27       	eor	r21, r21
-    1e12:	30 e2       	ldi	r19, 0x20	; 32
+    1e12:	30 e2       	ldi	r19, 0x20	; 32 hex literal
     1e14:	aa 0f       	add	r26, r26
     1e16:	bb 1f       	adc	r27, r27
     1e18:	88 1f       	adc	r24, r24
@@ -3577,13 +3630,18 @@ STC:
     1e56:	fd 01       	movw	r30, r26
     1e58:	bc 01       	movw	r22, r24
     1e5a:	08 95       	ret
+    
+LD_WORD:
+;Loads a word to (r30, r31) from (X+1, X) -> LE. Leaves X untouched.
     1e5c:	ed 91       	ld	r30, X+
     1e5e:	fc 91       	ld	r31, X
     1e60:	11 97       	sbiw	r26, 0x01	; 1
     1e62:	08 95       	ret
 
 
-
+LD_INT:
+;Loads int from (X .. X+3) to (r23, r22, r30, r31) -> LE. Leaves X untouched 
+;can't find where it's called
     1e64:	ed 91       	ld	r30, X+
     1e66:	fd 91       	ld	r31, X+
     1e68:	6d 91       	ld	r22, X+
@@ -3591,8 +3649,9 @@ STC:
     1e6c:	13 97       	sbiw	r26, 0x03	; 3
     1e6e:	08 95       	ret
 
-
-
+ST_INT:
+;stores int from (23, 22, 31, 30) to (Y-1 .. Y-4). Decrements Y.
+;can't find where it's called
     1e70:	7a 93       	st	-Y, r23
     1e72:	6a 93       	st	-Y, r22
     1e74:	fa 93       	st	-Y, r31
